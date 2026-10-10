@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Create Learning Session — AI LearnMate{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+  <div style="margin-bottom: 2rem;">
+    <h2>Create Learning Session</h2>
+    <p class="subtitle">Feed your lecture notes, transcript, or video to generate an adaptive assessment.</p>
+  </div>
+
+  <!-- Demo Mode Quick Banner -->
+  <div class="card" style="background: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 100%); border-color: #99f6e4; margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <span class="badge badge-demo" style="margin-bottom: 0.35rem;">⚡ Zero-API Hackathon Demo</span>
+        <h3 style="font-size: 1.15rem; color: var(--primary);">Want to test immediately without configuring an API key?</h3>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.2rem;">
+          Load our pre-curated B.Tech Operating Systems benchmark lecture (Process Synchronization & Semaphores) with instant adaptive questions.
+        </p>
+      </div>
+      <form action="{{ url_for('create_session') }}" method="POST">
+        <input type="hidden" name="is_demo" value="1">
+        <input type="hidden" name="title" value="Process Synchronization Demo">
+        <input type="hidden" name="subject" value="Operating Systems">
+        <input type="hidden" name="target_questions" value="10">
+        <button type="submit" class="btn btn-demo">
+          Launch Demo Assessment →
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Session Creation Form -->
+  <div class="card">
+    <form action="{{ url_for('create_session') }}" method="POST" enctype="multipart/form-data" id="session-form">
+      
+
+      <!-- Segmented Control for Source Type -->
+      <div class="form-group">
+        <label class="form-label">Lecture Source Input Method *</label>
+        <div class="segmented-control">
+          <button type="button" class="segment-btn {{ 'active' if not suggest_paste and source_type != 'youtube' and source_type != 'file' else '' }}" data-type="paste">
+            📋 Paste Notes / Transcript
+          </button>
+          <button type="button" class="segment-btn {{ 'active' if source_type == 'youtube' and not suggest_paste else '' }}" data-type="youtube">
+            ▶ YouTube Video Link
+          </button>
+          <button type="button" class="segment-btn {{ 'active' if source_type == 'file' else '' }}" data-type="file">
+            📁 Upload Text File
+          </button>
+        </div>
+        <input type="hidden" name="source_type" id="source_type_input" value="{{ 'paste' if suggest_paste else (source_type or 'paste') }}">
+      </div>
+
+      <!-- Section: Direct Paste -->
+      <div id="section-paste" style="display: {{ 'none' if (source_type in ['youtube', 'file'] and not suggest_paste) else 'block' }};">
+        <div class="form-group">
+          <label for="content" class="form-label">Paste Lecture Text, Notes or Transcript *</label>
+          <textarea id="content" name="content" class="form-textarea" 
+                    placeholder="Paste the professor's lecture notes, slide summary, or video transcript here...">{{ content or '' }}</textarea>
+          <div class="form-hint">
+            Minimum required content: {{ min_chars }} characters. More detailed notes yield higher-quality, multi-topic questions.
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: YouTube Link -->
+      <div id="section-youtube" style="display: {{ 'block' if (source_type == 'youtube' and not suggest_paste) else 'none' }};">
+        <div class="form-group">
+          <label for="youtube_url" class="form-label">YouTube Video URL *</label>
+          <input type="url" id="youtube_url" name="youtube_url" class="form-input" 
+                 placeholder="https://www.youtube.com/watch?v=..." 
+                 value="{{ youtube_url or '' }}">
+          <div class="form-hint">
+            The video must have closed captions / subtitles enabled. If extraction fails, you will be prompted to paste notes.
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: File Upload -->
+      <div id="section-file" style="display: {{ 'block' if source_type == 'file' else 'none' }};">
+        <div class="form-group">
+          <label for="lecture_file" class="form-label">Upload Lecture File *</label>
+          <input type="file" id="lecture_file" name="lecture_file" class="form-input" accept=".txt,.md,.vtt,.srt">
+          <div class="form-hint">
+            Supported formats: Plain text (.txt), Markdown (.md), Subtitles (.srt, .vtt). Maximum file size: 2 MB.
+          </div>
+        </div>
+      </div>
+
+      <!-- Assessment Preferences -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+        <div class="form-group">
+          <label for="language" class="form-label">Preferred Assessment Language</label>
+          <select id="language" name="language" class="form-select">
+            <option value="en" selected>English</option>
+            <option value="hi">Hindi / Hinglish (Bilingual)</option>
+          </select>
+          <div class="form-hint">Questions and explanations will match this language choice.</div>
+        </div>
+
+        <div class="form-group">
+          <label for="target_questions" class="form-label">Assessment Length</label>
+          <select id="target_questions" name="target_questions" class="form-select">
+            <option value="5">5 Questions (Quick Check)</option>
+            <option value="10" selected>10 Questions (Standard Diagnostic)</option>
+            <option value="15">15 Questions (Deep Evaluation)</option>
+          </select>
+          <div class="form-hint">Questions will adaptively cover all major topics found in the material.</div>
+        </div>
+      </div>
+
+      <!-- Submit Action -->
+      <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem;">
+        <a href="{{ url_for('index') }}" class="btn btn-outline">Cancel</a>
+        <button type="submit" class="btn btn-primary" id="btn-create-submit">
+          Generate Adaptive Quiz →
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

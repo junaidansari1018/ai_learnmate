@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Assessment History & Progress — AI LearnMate{% endblock %}
+
+{% block content %}
+<div style="max-width: 1040px; margin: 0 auto;">
+
+  <!-- Header -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h2>My Learning Progress & History</h2>
+      <p class="subtitle">Track assessment scores, identify long-term improvement trends, and revisit past reports.</p>
+    </div>
+    <a href="{{ url_for('create_session') }}" class="btn btn-primary">
+      + New Assessment
+    </a>
+  </div>
+
+  <!-- High-level Analytics Summary -->
+  {% if attempts %}
+  <div class="score-overview" style="margin-bottom: 2rem;">
+    <div class="score-metric">
+      <div class="metric-val">{{ total_attempts }}</div>
+      <div class="metric-label">Total Sessions Created</div>
+    </div>
+    <div class="score-metric">
+      <div class="metric-val">{{ completed_count }}</div>
+      <div class="metric-label">Completed Assessments</div>
+    </div>
+    <div class="score-metric">
+      <div class="metric-val">{{ avg_score }}</div>
+      <div class="metric-label">Average Score Points</div>
+    </div>
+  </div>
+
+  <!-- History Table Card -->
+  <div class="card">
+    <div style="overflow-x: auto;">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Date / Time</th>
+            <th>Lecture Title</th>
+            <th>Subject</th>
+            <th>Language</th>
+            <th>Score</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for att in attempts %}
+          <tr>
+            <td style="font-size: 0.85rem; color: var(--text-light); white-space: nowrap;">
+              {{ att.started_at[:16] }}
+            </td>
+            <td style="font-weight: 600;">
+              {{ att.title }}
+              {% if att.is_demo %}
+                <span class="badge badge-demo" style="font-size: 0.72rem; margin-left: 0.25rem;">Demo</span>
+              {% endif %}
+            </td>
+            <td>{{ att.subject }}</td>
+            <td style="text-transform: uppercase; font-size: 0.85rem; font-weight: 600;">
+              {{ att.language }}
+            </td>
+            <td>
+              <strong>{{ att.score | round(1) }}</strong> / {{ att.total_answered }}
+            </td>
+            <td>
+              {% if att.is_completed %}
+                <span class="badge" style="background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border);">
+                  ✓ Completed
+                </span>
+              {% else %}
+                <span class="badge" style="background: var(--warning-bg); color: var(--warning); border: 1px solid var(--warning-border);">
+                  ⏳ In Progress
+                </span>
+              {% endif %}
+            </td>
+            <td>
+              {% if att.is_completed %}
+                <div style="display: flex; gap: 0.5rem;">
+                  <a href="{{ url_for('view_report', attempt_uuid=att.attempt_uuid) }}" class="btn btn-outline btn-sm">
+                    Report
+                  </a>
+                  <a href="{{ url_for('review_answers', attempt_uuid=att.attempt_uuid) }}" class="btn btn-outline btn-sm">
+                    Review
+                  </a>
+                </div>
+              {% else %}
+                <a href="{{ url_for('take_quiz', attempt_uuid=att.attempt_uuid) }}" class="btn btn-accent btn-sm">
+                  Resume →
+                </a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% else %}
+  <!-- Empty State for First-Time Users -->
+  <div class="empty-state">
+    <div style="font-size: 3rem; margin-bottom: 0.75rem;">📚</div>
+    <h3>No Assessments Completed Yet</h3>
+    <p>
+      You haven't completed any quizzes yet. Add your first lecture or launch a benchmark demo to begin diagnosing your learning gaps.
+    </p>
+    <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+      <a href="{{ url_for('create_session') }}" class="btn btn-primary">
+        Start First Assessment →
+      </a>
+      <form action="{{ url_for('create_session') }}" method="POST" style="display: inline;">
+        <input type="hidden" name="is_demo" value="1">
+        <input type="hidden" name="title" value="Process Synchronization Demo">
+        <input type="hidden" name="subject" value="Operating Systems">
+        <input type="hidden" name="target_questions" value="10">
+        <button type="submit" class="btn btn-demo">
+          ⚡ Try Quick Demo
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

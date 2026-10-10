@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Review Answers — {{ session.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 880px; margin: 0 auto;">
+
+  <!-- Header -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <span class="badge badge-topic" style="margin-bottom: 0.35rem;">Assessment Review</span>
+      <h2>Detailed Answer Audit</h2>
+      <p class="subtitle">{{ session.title }} ({{ session.subject }})</p>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="{{ url_for('view_report', attempt_uuid=attempt.attempt_uuid) }}" class="btn btn-outline">
+        ← Back to Learning Report
+      </a>
+      <a href="{{ url_for('create_session') }}" class="btn btn-primary">
+        New Assessment
+      </a>
+    </div>
+  </div>
+
+  <!-- Question List Review Cards -->
+  <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    {% for ans in answers %}
+    <div class="card" style="border-left: 5px solid {{ 'var(--success)' if ans.is_correct == 1 else ('var(--warning)' if ans.score_awarded > 0 else 'var(--danger)') }};">
+      
+      <!-- Question Card Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-weight: 700; color: var(--text-muted);">Q{{ loop.index }}.</span>
+          <span class="badge badge-topic">{{ ans.topic }}</span>
+          {% if ans.answered_difficulty == 'Easy' %}
+            <span class="badge badge-easy">Easy</span>
+          {% elif ans.answered_difficulty == 'Hard' %}
+            <span class="badge badge-hard">Hard</span>
+          {% else %}
+            <span class="badge badge-medium">Medium</span>
+          {% endif %}
+          <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-light); font-weight: 600;">
+            {{ 'Multiple Choice' if ans.question_type == 'mcq' else 'Short Answer' }}
+          </span>
+        </div>
+
+        <div>
+          {% if ans.is_correct == 1 %}
+            <span class="badge" style="background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border);">
+              ✓ Correct (+{{ ans.score_awarded }} pt)
+            </span>
+          {% elif ans.score_awarded > 0 %}
+            <span class="badge" style="background: var(--warning-bg); color: var(--warning); border: 1px solid var(--warning-border);">
+              ⚡ Partial Credit (+{{ ans.score_awarded }} pt)
+            </span>
+          {% else %}
+            <span class="badge" style="background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger-border);">
+              ✕ Incorrect (0 pt)
+            </span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Question Text -->
+      <div style="font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin-bottom: 1.25rem;">
+        {{ ans.question_text }}
+      </div>
+
+      <!-- Comparison Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+        <!-- Student Answer -->
+        <div style="background-color: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.85rem;">
+          <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; margin-bottom: 0.35rem;">
+            Your Answer
+          </div>
+          <div style="font-size: 0.95rem; font-weight: 500; color: {{ '#166534' if ans.is_correct == 1 else '#991b1b' }};">
+            {{ ans.student_answer or '(No answer submitted)' }}
+          </div>
+        </div>
+
+        <!-- Reference Answer -->
+        <div style="background-color: var(--accent-light); border: 1px solid #99f6e4; border-radius: var(--radius-md); padding: 0.85rem;">
+          <div style="font-size: 0.78rem; font-weight: 700; color: var(--accent); text-transform: uppercase; margin-bottom: 0.35rem;">
+            Reference / Model Answer
+          </div>
+          <div style="font-size: 0.95rem; font-weight: 600; color: #0f766e;">
+            {{ ans.correct_answer }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Rubric Info (if short answer) -->
+      {% if ans.question_type == 'short_answer' and ans.evaluation_rubric %}
+      <div style="background-color: #fefce8; border: 1px solid #fef08a; border-radius: var(--radius-sm); padding: 0.75rem; margin-bottom: 1rem; font-size: 0.86rem; color: #854d0e;">
+        <strong>Evaluation Rubric:</strong> {{ ans.evaluation_rubric }}
+      </div>
+      {% endif %}
+
+      <!-- Explanation & Feedback -->
+      <div style="background-color: #f1f5f9; border-radius: var(--radius-md); padding: 1rem;">
+        <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.25rem;">
+          CONCEPTUAL EXPLANATION & EVALUATOR FEEDBACK:
+        </div>
+        <p style="font-size: 0.9rem; color: var(--text-main); line-height: 1.5; margin-bottom: 0.4rem;">
+          {{ ans.explanation }}
+        </p>
+        <p style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">
+          Feedback: {{ ans.evaluation_feedback }}
+        </p>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Bottom CTA -->
+  <div style="text-align: center; margin-top: 2.5rem;">
+    <a href="{{ url_for('view_report', attempt_uuid=attempt.attempt_uuid) }}" class="btn btn-outline" style="margin-right: 0.75rem;">
+      ← Return to Report
+    </a>
+    <a href="{{ url_for('progress_history') }}" class="btn btn-primary">
+      View All Past Attempts →
+    </a>
+  </div>
+
+</div>
+{% endblock %}

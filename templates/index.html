@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}AI LearnMate — Watch. Learn. Test. Improve.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+  <h1>AI LearnMate</h1>
+  <div class="hero-tagline">Watch. Learn. Test. Improve.</div>
+  <p>
+    Watching a 1-hour video or reading lecture slides creates the illusion of competence. 
+    <strong>AI LearnMate</strong> diagnoses what you actually retained by generating adaptive quizzes 
+    directly from your lecture notes, identifying conceptual gaps, and recommending targeted revision.
+  </p>
+  <div class="hero-actions">
+    <a href="{{ url_for('create_session') }}" class="btn btn-primary" style="font-size: 1.05rem; padding: 0.85rem 1.75rem;">
+      Start Learning Assessment →
+    </a>
+    <a href="{{ url_for('progress_history') }}" class="btn btn-outline" style="font-size: 1.05rem; padding: 0.85rem 1.5rem;">
+      View My Progress
+    </a>
+  </div>
+</section>
+
+<!-- The Learning Gap Problem Explanation -->
+<section style="margin-bottom: 3.5rem;">
+  <div class="card" style="border-left: 4px solid var(--primary); background: #fdfefe;">
+    <h3 style="margin-bottom: 0.5rem; color: var(--primary);">The Problem: Passive Consumption vs Active Retrieval</h3>
+    <p style="color: var(--text-muted); font-size: 0.98rem; line-height: 1.7;">
+      Most engineering students spend hours watching educational videos without testing their comprehension. 
+      Standard university exams happen weeks later, when it is too late to fix fundamental misconceptions. 
+      AI LearnMate bridges this gap through immediate <em>Formative Assessment</em>: turning lecture notes and transcripts 
+      into structured, adaptive diagnostic tests that pinpoint exactly where understanding breaks down.
+    </p>
+  </div>
+</section>
+
+<!-- 4-Step Process Section -->
+<section>
+  <div style="text-align: center; margin-bottom: 1.5rem;">
+    <h2>How AI LearnMate Works</h2>
+    <p class="subtitle">A complete 4-step loop from lecture intake to gap remediation</p>
+  </div>
+
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <h3>Add Lecture</h3>
+      <p>Paste a YouTube URL, copy-paste lecture notes, or upload a text file in English or Hindi/Hinglish.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <h3>Take Adaptive Quiz</h3>
+      <p>Answer questions one-by-one. The engine dynamically tunes difficulty based on your recent answers.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <h3>Discover Gaps</h3>
+      <p>Get instant feedback, rubric evaluation for short answers, and topic-wise estimated mastery breakdown.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <h3>Targeted Revision</h3>
+      <p>Receive actionable study recommendations and customized practice questions addressing your specific mistakes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Feature Cards Section -->
+<section style="margin: 3.5rem 0;">
+  <div style="text-align: center; margin-bottom: 2rem;">
+    <h2>Key Educational Features</h2>
+    <p class="subtitle">Designed for genuine conceptual mastery and hackathon explainability</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🎯</div>
+      <h3>Explainable Adaptive Engine</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">
+        No black-box mystery. Our rule-based engine monitors a 3-question sliding performance window and topic coverage to step difficulty up or down logically.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Honest Topic Mastery Analytics</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">
+        Clear evidence rules: topics with only 1 question are marked as "Limited Evidence" rather than falsely claiming complete mastery.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🇮🇳</div>
+      <h3>Bilingual Support (Hinglish)</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">
+        Break linguistic barriers. Generate questions and explanations in conversational Hindi/Hinglish to help regional engineering students grasp core concepts.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📝</div>
+      <h3>Conceptual Short-Answer Rubrics</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">
+        Go beyond rote MCQs. Write conceptual explanations evaluated against reference rubrics that accept valid synonyms and alternative phrasing.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- UN SDG 4 Section -->
+<section class="sdg-section">
+  <div class="sdg-icon-box">
+    <span class="sdg-num">4</span>
+    <span class="sdg-label">Quality Education</span>
+  </div>
+  <div>
+    <h2>United Nations SDG 4 Alignment</h2>
+    <p>
+      Target 4.4 seeks to substantially increase the number of youth with relevant technical skills. 
+      By empowering students with free, real-time diagnostic testing regardless of whether their college provides individualized tutoring, 
+      <strong>AI LearnMate</strong> democratizes personalized learning and closes achievement gaps early in the study cycle.
+    </p>
+  </div>
+</section>
+{% endblock %}

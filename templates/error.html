@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title or "Error" }} — AI LearnMate{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 3rem auto; text-align: center;">
+  <div class="card" style="padding: 3rem 2rem;">
+    <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+    <h2 style="color: var(--danger); margin-bottom: 0.75rem;">{{ title or "Notice" }}</h2>
+    <p style="color: var(--text-muted); font-size: 1.05rem; margin-bottom: 2rem; line-height: 1.6;">
+      {{ message or "An unexpected issue was encountered while processing your request." }}
+    </p>
+
+    <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+      <a href="{{ url_for('create_session') }}" class="btn btn-primary">
+        Start New Assessment
+      </a>
+      <a href="{{ url_for('index') }}" class="btn btn-outline">
+        Return to Home
+      </a>
+      <form action="{{ url_for('create_session') }}" method="POST" style="display: inline;">
+        <input type="hidden" name="is_demo" value="1">
+        <input type="hidden" name="title" value="Process Synchronization Demo">
+        <input type="hidden" name="subject" value="Operating Systems">
+        <input type="hidden" name="target_questions" value="10">
+        <button type="submit" class="btn btn-demo">
+          ⚡ Try Demo Mode
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
